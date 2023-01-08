@@ -409,6 +409,21 @@
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32f0xx_hal_msp.c</FilePath>
             </File>
+            <File>
+              <FileName>LCD16x2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\LCD16x2.c</FilePath>
+            </File>
+            <File>
+              <FileName>LCD16x2_cfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\LCD16x2_cfg.c</FilePath>
+            </File>
+            <File>
+              <FileName>DWT_Delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\DWT_Delay.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

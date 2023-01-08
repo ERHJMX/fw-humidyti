@@ -18,10 +18,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "stdio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-//#include "lcd_16x2.h"
+#include "LCD16x2.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -80,7 +81,7 @@ void fan(char state){
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	char txt[40];
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -105,11 +106,12 @@ int main(void)
   MX_TIM3_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-	
 	backlight(OFF);
 	fan(OFF);
-	
-
+	LCD_Init();
+	LCD_Clear();
+	LCD_Set_Cursor(1, 1);
+	LCD_Write_String("   humidifier   ");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -122,8 +124,14 @@ int main(void)
 				backlight(ON);
 				fan(ON);
 				HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
-				for(int x=0;x<15;x++)
+				for(int x=0;x<15;x++){
+					LCD_Set_Cursor(1, 1);
+					sprintf(txt,"%02d",x);
+					LCD_Write_String(txt);
 					HAL_Delay(60000);
+				}
+				LCD_Set_Cursor(1, 1);
+				LCD_Write_String("   ");
 			}
 		}
     /* USER CODE END WHILE */
