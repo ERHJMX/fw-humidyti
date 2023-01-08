@@ -31,6 +31,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define ON  1
+#define OFF 0
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -61,6 +63,13 @@ static void MX_USART1_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void backlight(char state){
+	HAL_GPIO_WritePin(BLK_GPIO_Port,BLK_Pin,state);
+}
+
+void fan(char state){
+	HAL_GPIO_WritePin(FAN_GPIO_Port,FAN_Pin,state);
+}
 
 /* USER CODE END 0 */
 
@@ -96,6 +105,10 @@ int main(void)
   MX_TIM3_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
+	
+	backlight(OFF);
+	fan(OFF);
+	
 
   /* USER CODE END 2 */
 
@@ -103,9 +116,22 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+		if(HAL_GPIO_ReadPin(SW_GPIO_Port,SW_Pin)){
+			HAL_Delay(250);
+			if(HAL_GPIO_ReadPin(SW_GPIO_Port,SW_Pin)){
+				backlight(ON);
+				fan(ON);
+				HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+				for(int x=0;x<15;x++)
+					HAL_Delay(60000);
+			}
+		}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+		HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_2);
+		backlight(OFF);
+		fan(OFF);
   }
   /* USER CODE END 3 */
 }
@@ -205,7 +231,7 @@ static void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 0;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 4096;
+  htim3.Init.Period = 48;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
@@ -219,7 +245,7 @@ static void MX_TIM3_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 1024;
+  sConfigOC.Pulse = 24;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
@@ -283,29 +309,29 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0|GPIO_PIN_6, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, BLK_Pin|FAN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13
-                          |GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, LCD_D7_Pin|LCD_RS_Pin|LCD_RW_Pin|LCD_EN_Pin
+                          |LCD_D4_Pin|LCD_D5_Pin|LCD_D6_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PA0 PA6 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_6;
+  /*Configure GPIO pins : BLK_Pin FAN_Pin */
+  GPIO_InitStruct.Pin = BLK_Pin|FAN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA5 PA11 PA12 */
-  GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_11|GPIO_PIN_12;
+  /*Configure GPIO pins : SW_Pin PA11_Pin PA12_Pin */
+  GPIO_InitStruct.Pin = SW_Pin|PA11_Pin|PA12_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB10 PB11 PB12 PB13
-                           PB7 PB8 PB9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13
-                          |GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9;
+  /*Configure GPIO pins : LCD_D7_Pin LCD_RS_Pin LCD_RW_Pin LCD_EN_Pin
+                           LCD_D4_Pin LCD_D5_Pin LCD_D6_Pin */
+  GPIO_InitStruct.Pin = LCD_D7_Pin|LCD_RS_Pin|LCD_RW_Pin|LCD_EN_Pin
+                          |LCD_D4_Pin|LCD_D5_Pin|LCD_D6_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

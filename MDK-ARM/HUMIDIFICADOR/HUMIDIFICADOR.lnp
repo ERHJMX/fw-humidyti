@@ -1,0 +1,28 @@
+--cpu Cortex-M0
+"humidificador\startup_stm32f070xb.o"
+"humidificador\main.o"
+"humidificador\stm32f0xx_it.o"
+"humidificador\stm32f0xx_hal_msp.o"
+"humidificador\stm32f0xx_hal_iwdg.o"
+"humidificador\stm32f0xx_hal_rcc.o"
+"humidificador\stm32f0xx_hal_rcc_ex.o"
+"humidificador\stm32f0xx_hal.o"
+"humidificador\stm32f0xx_hal_i2c.o"
+"humidificador\stm32f0xx_hal_i2c_ex.o"
+"humidificador\stm32f0xx_hal_gpio.o"
+"humidificador\stm32f0xx_hal_dma.o"
+"humidificador\stm32f0xx_hal_cortex.o"
+"humidificador\stm32f0xx_hal_pwr.o"
+"humidificador\stm32f0xx_hal_pwr_ex.o"
+"humidificador\stm32f0xx_hal_flash.o"
+"humidificador\stm32f0xx_hal_flash_ex.o"
+"humidificador\stm32f0xx_hal_exti.o"
+"humidificador\stm32f0xx_hal_tim.o"
+"humidificador\stm32f0xx_hal_tim_ex.o"
+"humidificador\stm32f0xx_hal_uart.o"
+"humidificador\stm32f0xx_hal_uart_ex.o"
+"humidificador\system_stm32f0xx.o"
+--strict --scatter "HUMIDIFICADOR\HUMIDIFICADOR.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "HUMIDIFICADOR.map" -o HUMIDIFICADOR\HUMIDIFICADOR.axf
