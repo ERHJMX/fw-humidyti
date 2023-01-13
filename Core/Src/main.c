@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stdio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -102,16 +101,26 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_IWDG_Init();
+  //MX_IWDG_Init();
   MX_TIM3_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 	backlight(OFF);
 	fan(OFF);
-	LCD_Init();
+	HAL_Delay(1000);
+	
+	for(int x=0;x<5;x++){
+		backlight(ON);
+		fan(ON);
+		HAL_Delay(5000);
+		backlight(OFF);
+		fan(OFF);
+		HAL_Delay(5000);
+	}
+	/*LCD_Init();
 	LCD_Clear();
 	LCD_Set_Cursor(1, 1);
-	LCD_Write_String("   humidifier   ");
+	LCD_Write_String("   humidifier   ");*/
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -125,13 +134,13 @@ int main(void)
 				fan(ON);
 				HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
 				for(int x=0;x<15;x++){
-					LCD_Set_Cursor(1, 1);
+					/*LCD_Set_Cursor(1, 1);
 					sprintf(txt,"%02d",x);
-					LCD_Write_String(txt);
+					LCD_Write_String(txt);*/
 					HAL_Delay(60000);
 				}
-				LCD_Set_Cursor(1, 1);
-				LCD_Write_String("   ");
+				//LCD_Set_Cursor(1, 1);
+				//LCD_Write_String("   ");
 			}
 		}
     /* USER CODE END WHILE */
@@ -157,11 +166,12 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL6;
   RCC_OscInitStruct.PLL.PREDIV = RCC_PREDIV_DIV1;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
