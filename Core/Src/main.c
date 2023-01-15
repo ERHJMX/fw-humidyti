@@ -21,7 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "LCD16x2.h"
+#include "bsp_lcd20x4.h"
+#include "bsp_hd44780.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -107,7 +108,13 @@ int main(void)
   /* USER CODE BEGIN 2 */
 	backlight(OFF);
 	fan(OFF);
-	HAL_Delay(1000);
+	
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+	HD44780_Init();	
+	HD44780_Clear();
+	vLCD20x4_SetXY(0,0);
+	vLCD20x4_Text("HUMIDIFICADOR");
+	HAL_Delay(1000);	
 	
 	for(int x=0;x<5;x++){
 		backlight(ON);
@@ -117,10 +124,6 @@ int main(void)
 		fan(OFF);
 		HAL_Delay(5000);
 	}
-	/*LCD_Init();
-	LCD_Clear();
-	LCD_Set_Cursor(1, 1);
-	LCD_Write_String("   humidifier   ");*/
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -131,12 +134,12 @@ int main(void)
 			HAL_Delay(250);
 			if(HAL_GPIO_ReadPin(SW_GPIO_Port,SW_Pin)){
 				backlight(ON);
-				fan(ON);
-				HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+				fan(ON);				
 				for(int x=0;x<15;x++){
 					/*LCD_Set_Cursor(1, 1);
 					sprintf(txt,"%02d",x);
 					LCD_Write_String(txt);*/
+					HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
 					HAL_Delay(60000);
 				}
 				//LCD_Set_Cursor(1, 1);
@@ -249,9 +252,9 @@ static void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 0;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 48;
+  htim3.Init.Period = 480;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  //htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
   {
     Error_Handler();
@@ -263,7 +266,7 @@ static void MX_TIM3_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 24;
+  sConfigOC.Pulse = 240;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
